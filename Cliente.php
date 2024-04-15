@@ -66,6 +66,15 @@ class Cliente{
                 "Estado: " . $this->getEstado(). "\n";
     }
 
+    public function checkEstadoBaja(){
+        $bandera = $this->getEstado();
+        if($bandera == true){
+            $mostrar = 1;
+        }else{
+            $mostrar = -1;
+        }
+        return $mostrar;
+    }
 }
 
 ?>

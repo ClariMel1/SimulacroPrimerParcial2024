@@ -74,12 +74,16 @@ class Empresa{
         }
         return $mostrar;
     }
+
     public function mostrarVentas(){
         $mostrar = "";
         $ventas = $this->getVentas();
         for ($i = 0; $i < count($ventas); $i++) {
-            $mostrar = $mostrar. $ventas[$i] . "\n";
+            $venta = $ventas[$i]->__toString();
+            $mostrar = $mostrar .  $venta;
         }
+
+        return $mostrar;
     }
 
     //4. Redefinir el método _toString para que retorne la información de los atributos de la clase.
@@ -122,22 +126,34 @@ class Empresa{
      * para registrar una venta en un momento determinado.
      * El método debe setear los variables instancias de venta que corresponda y retornar el importe final de la
      * venta.
-     * @return int
     */
 
 
     public function registrarVenta($colCodigosMoto, $objCliente){
-        $venta = new Venta(0, 0, $objCliente, 0, 0);
+        $checkVenta = count($this->getVentas());
+        $nroVenta = $checkVenta + 1;
+        $fecha = date('l j f');
         $importeFinal = 0;
+        $arregloMotos = [];
+        $objVenta = new Venta($nroVenta, $fecha, $objCliente, $arregloMotos, $importeFinal);
 
         for ($i = 0; $i< count($colCodigosMoto); $i++){
             $codigo = $colCodigosMoto[$i];
             $moto = $this->retornarMoto($codigo);
-            if($moto != false && $moto->getActiva() == 1 && $objCliente->getEstado() == "si"){
-                $importe = $venta->incorporarMoto($moto);
+            if($moto != false && $moto->getActiva() == 1 && $objCliente->getEstado() == 1){
+                $arregloMotos[]= $moto;
+                $importe = $objVenta->incorporarMoto($moto);
                 $importeFinal = $importeFinal + $importe;
+                $objVenta->setPrecioFinal($importeFinal);
             }
         }
+
+        if($importeFinal !=0){
+            array_push($this->ventasRealizadas, $objVenta);
+        }else{
+            $importeFinal = null;
+        }
+
         return $importeFinal;
     }
 
@@ -170,30 +186,30 @@ class Empresa{
     //7. Implementar el método retornarVentasXCliente($tipo,$numDoc) que recibe por parámetro el tipo y
     // número de documento de un Cliente y retorna una colección con las ventas realizadas al cliente.
     public function retornarVentasXCliente($tipo, $numDoc){
+        $ventaXcliente = "";
         $ventas = $this->getVentas();
-        $compra_del_cliente = [];
-
-        $encontrarCliente = false;
-        $i=0;
-        while($i<count($ventas)&& $encontrarCliente == false){
-            $venta = $ventas [$i];
+        $clienteEncontrado = false;
+    
+        for ($i = 0; $i < count($ventas); $i++) {
+            $venta = $ventas[$i];
             $cliente = $venta->getCliente();
             if($cliente->getTipoDoc() == $tipo && $cliente->getNroDoc() == $numDoc){
-                $compra_del_cliente [] = $cliente; 
+                $clienteEncontrado = true;
+                $venta = $ventas[$i]->__toString();
+                $ventaXcliente = $ventaXcliente .  $venta; 
             }
         }
 
-        return $compra_del_cliente;
+        if($clienteEncontrado == false){
+            $ventaXcliente = null;
+        }
+
+        return $ventaXcliente;
     }
 
     public function registrarCliente($nombre, $apellido, $estado_baja, $tipoDocumento, $nroDocumento){
         $objCliente = new Cliente($nombre, $apellido, $estado_baja, $tipoDocumento, $nroDocumento);
         return array_push($this->arregloClientes, $objCliente);
-    }
-
-    public function agregarVenta($numero, $fecha, $objCliente, $precioFinal){
-        $objVenta = new Venta ($numero, $fecha, $objCliente, $precioFinal);
-        return array_push($this->ventasRealizadas, $objVenta);
     }
 
     public function agregarMoto($codigo, $costo, $año_fabricacion, $descripcion, $porcentajeIncAnual, $activa){

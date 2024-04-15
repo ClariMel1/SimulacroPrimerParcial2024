@@ -13,12 +13,12 @@ class Venta{
     private $precioFinal;
 
     //2. Método constructor que recibe como parámetros cada uno de los valores a ser asignados a cada atributo de la clase.
-    public function __construct($numero, $fecha, $objCliente, $precioFinal)
+    public function __construct($numero, $fecha, $objCliente,$arregloMotos,  $precioFinal)
     {
         $this->numero = $numero;
         $this->fecha = $fecha;
         $this->objCliente = $objCliente;
-        $this->arregloMotos = [];
+        $this->arregloMotos = $arregloMotos;
         $this->precioFinal = $precioFinal;
     }
 
@@ -82,16 +82,12 @@ class Venta{
      * incorpora a la colección de motos de la venta, siempre y cuando sea posible la venta. El método cada
      * vez que incorpora una moto a la venta, debe actualizar la variable instancia precio final de la venta.
      * Utilizar el método que calcula el precio de venta de la moto donde crea necesario.
-     * @param $objMoto
-     * @return int
     */
     public function incorporarMoto($objMoto){
-        $precioMoto = $objMoto->darPrecioVenta();
-
-        if($precioMoto !== -1){
-            $precioActual = $precioMoto + $this->getPrecioFinal();
+        if($objMoto->checkEstadoMoto() != -1){
+            $precioMoto = $objMoto->darPrecioVenta();
             $this->arregloMotos []= $objMoto;
-            return $this->setPrecioFinal($precioActual);
+            return $precioMoto;
         }
     }
 }

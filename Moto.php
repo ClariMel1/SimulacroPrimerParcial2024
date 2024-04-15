@@ -73,7 +73,7 @@ class Moto {
     public function __toString()
     {
         return "Codigo: ". $this->getCodigo(). "\n" . 
-               "Costo: ". $this->getCosto(). "\n" . 
+               "Costo: ". $this->darPrecioVenta(). "\n" . 
                "Año de Fabricacion: ". $this->getAñoFabricacion() . "\n". 
                "Descripcion: ". $this->getDescripcion(). "\n". 
                "Porcentaje de Incremento Anual: ". $this->getPorcentaje(). "%     ". "Activa: ". $this->checkEstadoMoto(). "\n";
