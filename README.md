@@ -1,4 +1,4 @@
-# SimulacroPrimerParcial2024.
+# SimulacroSegundoParcial2024.
 Ejercicios para el simulacro del Segundo Parcial
 
 # Introduccion a la Programacion Orientada en Objetos
