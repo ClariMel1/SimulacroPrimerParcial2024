@@ -90,5 +90,52 @@ class Venta{
             return $precioMoto;
         }
     }
+
+    /**
+     * Implementar el método retornarTotalVentaNacional() que retorna  la sumatoria del precio venta de cada una de las motos Nacionales vinculadas a la venta.
+    */
+    public function retornarTotalVentaNacional(){
+        $suma = 0;
+        $motos = $this->arregloMotos;
+        for($i=0; $i <count($motos); $i++){
+            $moto = $motos[$i];
+            $tipo = $this->checkTipoMoto($moto);
+            if($tipo == 0){
+                $precio = $moto->darPrecioVenta();
+                $suma = $suma + $precio;
+            }
+        }
+
+        return $suma;
+    }
+
+    /**
+     * Implementar el método retornarMotosImportadas() que retorna una colección de motos importadas vinculadas a la venta. Si la venta solo se corresponde con motos Nacionales la colección retornada debe ser vacía.
+    */
+    public function retornarMotosImportadas(){
+        $motos = $this->arregloMotos;
+        $arregloMotosImportadas = [];
+
+        for($i=0; $i <count($motos); $i++){
+            $moto = $motos[$i];
+            $tipo = $this->checkTipoMoto($moto);
+            if($tipo == 1){
+                array_push ($arregloMotosImportadas, $moto);
+            }
+        }
+        return $arregloMotosImportadas;
+    }
+
+    //Chequea el tipo de moto
+    public function checkTipoMoto($objMoto){
+        $tipo = null;
+
+        if($objMoto instanceof MotoImportada){
+            $tipo = 1;
+        }elseif($objMoto instanceof MotoNacional){
+            $tipo = 0;
+        }
+        return $tipo;
+    }
 }
 ?>

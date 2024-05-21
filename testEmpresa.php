@@ -9,11 +9,12 @@ $objCliente1 = new Cliente("Ameli", "Venegas", true, "DNI", 45978889);
 $objCliente2 = new Cliente("Ivan", "Lopez", true, "DNI", 92926837);
 $coleccionClientes = [$objCliente1, $objCliente2];
 
-//2. Cree 3 objetos Motos con la información visualizada en la tabla:
-$objMoto1 = new Moto(11, 2230000, 2022, "Benelli Imperiale 400", 85, true);
-$objMoto2 = new Moto(12,584000, 2021, "Zanella Zr 150 Ohc", 70, true );
-$objMoto3 = new Moto(13, 999900, 2023, "Zanella Patagonia Eagle 250", 55, false);
-$coleccionMotos = [$objMoto1, $objMoto2, $objMoto3];
+//2. Cree 4 objetos Motos con la información visualizada en la tabla:
+$objMoto1 = new MotoNacional(11, 2230000, 2022, "Benelli Imperiale 400", 85, true, 10);
+$objMoto2 = new MotoNacional(12,584000, 2021, "Zanella Zr 150 Ohc", 70, true, 10);
+$objMoto3 = new MotoNacional(13, 999900, 2023, "Zanella Patagonia Eagle 250", 55, false, 10);
+$objMoto4 = new MotoImportada(14, 12499900,2020, "Pitbike Enduro Motocross Apollo Aiii 190cc Plr", 100, true, "Francia", 6244400);
+$coleccionMotos = [$objMoto1, $objMoto2, $objMoto3. $objMoto4];
 
 $coleccionVentas = [];
 
@@ -23,12 +24,11 @@ $objEmpresa = new Empresa("Alta Gama", "Av Argentina 123", $coleccionClientes, $
 do{
     echo "**************************************". "\n";
     echo "(1) Registrar una Venta.". "\n";
-    echo "(2) Registrar un cliente.". "\n";
-    echo "(3) Ventas por Cliente.". "\n";
-    echo "(4) Buscar informacion sobre una Moto ". "\n";
-    echo "(5) Agregar Moto a la venta". "\n";
-    echo "(6) Mostrar Informacion cargada". "\n";
-    echo "(7) Salir". "\n";
+    echo "(2) Ventas por Cliente.". "\n";
+    echo "(3) Buscar informacion sobre una Moto ". "\n";
+    echo "(4) Agregar Moto a la venta". "\n";
+    echo "(5) Mostrar Informacion cargada". "\n";
+    echo "(6) Salir". "\n";
     echo "**************************************". "\n";
     $opcion = trim(fgets(STDIN));
 
@@ -41,29 +41,35 @@ do{
             $numero = trim(fgets(STDIN));
             
             $cliente = $objEmpresa->checkClienteRegistrado($tipo, $numero);
-            $codigosMoto= $objEmpresa->arregloCodigos();
+            if($cliente==false){
+                echo "Nombre:";
+                $nombre = trim(fgets(STDIN));
+                echo "Apellido:";
+                $apellido = trim(fgets(STDIN));
+                echo "Esta dado de baja?(s/n):";
+                $baja = trim(fgets(STDIN));
+                if($baja == "s"){
+                    echo "(!!!)No puede registrar compras desde el momento de su baja.". "\n";
+                }elseif($baja == "n"){
+                    $estado = true;
+                    $cliente = new Cliente($nombre, $apellido, $estado, $tipo, $numero);
+                    array_push($coleccionClientes, $cliente);
+                    echo "Cliente registrado! :)". "\n";
+                }else{
+                    echo "Error (x)". "\n";
+                }
+            }
+            print_r($coleccionMotos);
+            $codigosMoto=[];
+            do{
+                echo "Ingrese el codigo de moto a comprar:(x para terminar)";
+                $codigo=trim(fgets(STDIN));
+                array_push($codigosMoto,$codigo);
+            }while($codigo!="x");
             $importe = $objEmpresa->registrarVenta($codigosMoto, $cliente);
             echo "El precio del importe total es de ". $importe . "\n";
             break;
         case '2':
-            echo "Nombre:";
-            $nombre = trim(fgets(STDIN));
-            echo "Apellido:";
-            $apellido = trim(fgets(STDIN));
-            echo "Esta dado de baja?(s/n):";
-            $baja = trim(fgets(STDIN));
-            if($baja == "si"){
-                echo "(!!!)No puede registrar compras desde el momento de su baja.". "\n";
-            }else{
-                $baja = true;
-                echo "Tipo de Documento:";
-                $tipo = trim(fgets(STDIN));
-                echo "Numero de Documento:";
-                $numero = trim(fgets(STDIN));
-                $objEmpresa->registrarCliente($nombre, $apellido, $baja, $tipo, $numero);
-            }
-            break;
-        case '3':
             echo "Tipo de Documento:";
             $tipo = trim(fgets(STDIN));
             echo "Numero de Documento:";
@@ -75,7 +81,7 @@ do{
                 echo $ventaCliente . "\n";
             }
             break;
-        case '4':
+        case '3':
             echo "Para buscar info, ingresar Codigo del mismo:";
             $codigo = trim(fgets(STDIN));
             $mostrar= $objEmpresa->retornarMoto($codigo);
@@ -85,7 +91,7 @@ do{
                 echo $mostrar . "\n";
             }
             break;
-        case '5':
+        case '4':
             echo "Codigo:". "\n";
             $codigo = trim(fgets(STDIN));
             echo "Costo:". "\n";
@@ -103,12 +109,44 @@ do{
             }else{
                 $activa = false;
             }
-             $objEmpresa->agregarMoto($codigo, $costo, $año, $descripcion, $porcentaje, $activa);
+            echo "******TIPO******". "\n";
+            echo "1.Moto Importada.". "\n";
+            echo "2.Moto Nacional.". "\n";
+            echo "****************";
+            $tipo =trim(fgets(STDIN));
+            if($tipo == 1){
+                echo "Pais de Origen:"."\n";
+                $pais=trim(fgets(STDIN));
+                echo "Impuestos:". "\n";
+                $impuestos=trim(fgets(STDIN));
+                $motoAgregada = new MotoImportada($codigo, $costo, $año, $descripcion, $porcentaje, $activa, $pais, $impuestos);
+                array_push($coleccionMotos, $motoAgregada);
+            }elseif($tipo==2){
+                $porcentajeDescuento = 10;
+                $motoAgregada = new MotoNacional($codigo, $costo, $año, $descripcion, $porcentaje, $activa,$porcentajeDescuento);
+                array_push($coleccionMotos, $motoAgregada);
+            }else{
+                echo "Error (x)!!!". "\n";
+            }
+            echo "Moto Agregada!:)". "\n";
             break;
-        case '6':
-            echo $objEmpresa->__toString(). "\n";
+        case '5':
+            echo "************MOSTRAR*************"."\n";
+            echo "1.Ver Todas las Ventas Importadas". "\n";
+            echo "2.Ver Suma de ventas Nacionales". "\n";
+            echo "3.Ver resumen de Empresa.". "\n";
+            echo "*********************************". "\n";
+            $mostrar = trim(fgets(STDIN));
+            if($mostrar == 1){
+                $ventasImportadas = $objEmpresa->informarVentasImportadas();
+                print_r($ventasImportadas);
+            }elseif($mostrar ==2){
+                echo $objEmpresa->informarSumaVentaNacionales();
+            }else{
+                echo $objEmpresa->__toString(). "\n";
+            }
             break;
     }
-}while($opcion !=7);
+}while($opcion !=6);
 
 ?>

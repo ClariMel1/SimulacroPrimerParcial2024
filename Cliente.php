@@ -71,7 +71,7 @@ class Cliente{
         if($bandera == true){
             $mostrar = 1;
         }else{
-            $mostrar = -1;
+            $mostrar = 0;
         }
         return $mostrar;
     }

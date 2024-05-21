@@ -86,7 +86,7 @@ class Moto {
         $porcentajeIncrementoAnual = $this->getPorcentaje();
         $disponibilidad = $this->getActiva();
 
-        if ($disponibilidad) { // No es necesario comparar con true, ya que $disponibilidad ya es un booleano
+        if ($disponibilidad) { 
             $precioVenta = $costo + ($costo * ($anio * ($porcentajeIncrementoAnual / 100)));
         } else {
             $precioVenta = -1;
@@ -100,7 +100,7 @@ class Moto {
         if($bandera == true){
             $mostrar = 1;
         }else{
-            $mostrar = -1;
+            $mostrar = 0;
         }
         return $mostrar;
     }

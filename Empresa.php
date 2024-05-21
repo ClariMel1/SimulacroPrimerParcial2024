@@ -64,7 +64,7 @@ class Empresa{
         for ($i = 0; $i < count($clientes); $i++) {
             $mostrar = $mostrar. $clientes[$i] . "\n";
         }
-        return $mostrar;
+        return $mostrar;  
     }
     public function mostrarMotos(){
         $mostrar= "";
@@ -171,18 +171,6 @@ class Empresa{
         return $registrado;
     }
 
-    public function arregloCodigos(){
-        $arregloCodigos = [];
-        $motos = $this->arregloMotos;
-
-        for ($i = 0; $i<count($motos);$i++){
-            $moto = $motos[$i];
-            $codigoMoto= $moto->getCodigo();
-            $arregloCodigos[] =$codigoMoto;
-        }
-        return $arregloCodigos;
-    }
-
     //7. Implementar el método retornarVentasXCliente($tipo,$numDoc) que recibe por parámetro el tipo y
     // número de documento de un Cliente y retorna una colección con las ventas realizadas al cliente.
     public function retornarVentasXCliente($tipo, $numDoc){
@@ -207,14 +195,38 @@ class Empresa{
         return $ventaXcliente;
     }
 
-    public function registrarCliente($nombre, $apellido, $estado_baja, $tipoDocumento, $nroDocumento){
-        $objCliente = new Cliente($nombre, $apellido, $estado_baja, $tipoDocumento, $nroDocumento);
-        return array_push($this->arregloClientes, $objCliente);
+    /**
+     * Implementar el método informarSumaVentasNacionales() que recorre la colección de ventas realizadas por la empresa y retorna el importe total de ventas Nacionales realizadas por la empresa.
+     */
+    public function informarSumaVentaNacionales(){
+        $ventas = $this->ventasRealizadas;
+        $importeTotal = 0;
+
+        for($i=0; $i<count($ventas); $i++){
+            $venta = $ventas[$i];
+            if($venta){
+                $importe_por_venta = $venta->retornarTotalVentaNacional();
+                $importeTotal = $importeTotal + $importe_por_venta;
+            }
+        }
+        return $importeTotal;
     }
 
-    public function agregarMoto($codigo, $costo, $año_fabricacion, $descripcion, $porcentajeIncAnual, $activa){
-        $objMoto = new Moto($codigo, $costo, $año_fabricacion, $descripcion, $porcentajeIncAnual, $activa);
-        return array_push($this->arregloMotos, $objMoto);
+    /**
+     * Implementar el método informarVentasImportadas() que recorre la colección de ventas realizadas por la empresa y retorna una colección de ventas de motos  importadas. Si en la venta al menos una de las motos es importada la venta debe ser informada.
+     */
+    public function informarVentasImportadas(){
+        $ventas = $this->ventasRealizadas;
+        $ventasImportadas = [];
+
+        for($i=0; $i<count($ventas); $i++){
+            $venta = $ventas[$i];
+            if($venta){
+                $arreglo_por_venta = $venta->retornarMotosImportadas();
+                array_push($ventasImportadas, $arreglo_por_venta);
+            }
+        }
+        return $ventasImportadas;
     }
 }
 ?>
